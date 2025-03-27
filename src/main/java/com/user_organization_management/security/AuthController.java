@@ -49,7 +49,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {return ResponseEntity.badRequest().body(null);}
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         userDTO.setPassword(encodedPassword);
         return ResponseEntity.ok(userService.createUser(userDTO));

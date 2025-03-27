@@ -1,5 +1,6 @@
 package com.user_organization_management.controller;
 
+import com.user_organization_management.model.CustomPageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -23,29 +24,16 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-//	@GetMapping
-//	 public ResponseEntity<List<UserDTO>> getAllUsers() {
-//        return ResponseEntity.ok(userService.getAllUsers());
-//    }
-	
-//	@GetMapping
-//	public ResponseEntity<List<UserDTO>> getAllUsers(
-//			@RequestParam(required = false) String email,
-//	        @RequestParam(required = false) String mobile) {
-//        return ResponseEntity.ok(userService.getUsersByFilter(email, mobile));
-//    }
-
 	@GetMapping
-	public ResponseEntity<Page<UserDTO>> getAllUsers(
-	        @RequestParam(required = false) String email,
-	        @RequestParam(required = false) String mobile,
-	        @RequestParam(defaultValue = "0") int page,
-	        @RequestParam(defaultValue = "10") int size) {
-	    return ResponseEntity.ok(userService.getUsersByFilterWithPagination(email, mobile, page, size));
+	public ResponseEntity<CustomPageResponse<UserDTO>> getAllUsers(
+			@RequestParam(required = false) String email,
+			@RequestParam(required = false) String mobile,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
+		return ResponseEntity.ok(userService.getUsersByFilterWithPagination(email, mobile, page, size));
 	}
-	
-	
-	 @GetMapping("/{id}")
+
+	@GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
                 .map(ResponseEntity::ok)

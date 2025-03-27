@@ -11,14 +11,49 @@
                 <tableExists tableName="usersT"/>
             </not>
         </preConditions>
-        <sqlFile path="db/changelog/changes/create-tables.sql"/>
+        <createTable tableName="usersT">
+            <column name="id" type="SERIAL" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="organizationsT">
+            <column name="id" type="SERIAL" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
     </changeSet>
 
     <changeSet id="2" author="mtoaima">
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="usersT"/>
         </preConditions>
-        <sqlFile path="db/changelog/changes/insert-data.sql"/>
+        <insert tableName="usersT">
+            <column name="username" value="admin"/>
+            <column name="email" value="admin@example.com"/>
+            <column name="password" value="securepassword"/>
+        </insert>
     </changeSet>
 
+    <changeSet id="3" author="mtoaima">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="organizationsT"/>
+        </preConditions>
+        <insert tableName="organizationsT">
+            <column name="name" value="Default Organization"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>

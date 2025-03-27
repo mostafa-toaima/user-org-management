@@ -25,12 +25,15 @@ public class OrganizationService {
 		 	return organizationRepository.findById(id)
                 .map(org -> new OrganizationDTO(org.getId(), org.getName()));
 	 }
-	 
-	 public OrganizationDTO createOrganization(OrganizationDTO organizationDTO) {
-		    OrganizationEntity org = new OrganizationEntity(organizationDTO.getName());
-		    OrganizationEntity organization = organizationRepository.save(org);
-		    return new OrganizationDTO(organization.getId(), organization.getName());
-		}
 
+
+	public OrganizationDTO createOrganization(OrganizationDTO dto) {
+		if (organizationRepository.existsByName(dto.getName())) {
+			throw new IllegalArgumentException("Organization name already exists!");
+		}
+		OrganizationEntity organization = new OrganizationEntity(dto.getName());
+		organization = organizationRepository.save(organization);
+		return new OrganizationDTO(organization.getId(), organization.getName());
+	}
 
 }
