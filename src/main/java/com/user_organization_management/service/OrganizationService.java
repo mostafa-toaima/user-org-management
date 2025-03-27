@@ -3,11 +3,11 @@ package com.user_organization_management.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.user_organization_management.entity.OrganizationEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.user_organization_management.dto.OrganizationDTO;
-import com.user_organization_management.entity.Organization;
 import com.user_organization_management.repository.OrganizationRepository;
 
 @Service
@@ -27,8 +27,8 @@ public class OrganizationService {
 	 }
 	 
 	 public OrganizationDTO createOrganization(OrganizationDTO organizationDTO) {
-		    Organization org = new Organization(organizationDTO.getName());
-		    Organization organization = organizationRepository.save(org); 
+		    OrganizationEntity org = new OrganizationEntity(organizationDTO.getName());
+		    OrganizationEntity organization = organizationRepository.save(org);
 		    return new OrganizationDTO(organization.getId(), organization.getName());
 		}
 

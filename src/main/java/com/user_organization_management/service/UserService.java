@@ -3,6 +3,8 @@ package com.user_organization_management.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.user_organization_management.entity.OrganizationEntity;
+import com.user_organization_management.entity.UserEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.user_organization_management.dto.UserDTO;
-import com.user_organization_management.entity.Organization;
-import com.user_organization_management.entity.User;
 import com.user_organization_management.exception.EntityNotFoundException;
 import com.user_organization_management.repository.OrganizationRepository;
 import com.user_organization_management.repository.UserRepository;
@@ -32,7 +32,7 @@ public class UserService {
 	
 	public List<UserDTO> getAllUsers() {
         logger.info("Fetching all users...");
-        List<User> users = userRepository.findAll();
+        List<UserEntity> users = userRepository.findAll();
         logger.info("Found {} users", users.size());
         return users.stream().map(this::convertEntityToDTO).toList();
     }
@@ -54,7 +54,7 @@ public class UserService {
 //	
     public Page<UserDTO> getUsersByFilterWithPagination(String email, String mobile, int page, int size) {
         Pageable pageable = PageRequest.of(page, size); 
-        Page<User> usersPage;  
+        Page<UserEntity> usersPage;
         logger.info("Filtering users by email: {} and mobile: {}", email, mobile);
         if (email != null && mobile != null) {
             usersPage = userRepository.findByEmailContainingOrMobileContaining(email, mobile, pageable);
@@ -84,25 +84,25 @@ public class UserService {
 	public UserDTO createUser(UserDTO userDto) {
 		logger.info("Cereate User: {}", userDto);
 
-		User user = convertDTOToEntity(userDto);
-		User savedUser = userRepository.save(user);
+		UserEntity user = convertDTOToEntity(userDto);
+		UserEntity savedUser = userRepository.save(user);
 		logger.info("user Saved: {}", savedUser);
 		return convertEntityToDTO(savedUser);
 		
 	}
 	
 	public UserDTO assignUserToOrganization(Long userId, Long orgId) {
-		User user = userRepository.findById(userId)
+		UserEntity user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("Use Not Found")) ;
-		Organization organization = organizationRepository.findById(orgId)
-				.orElseThrow(() -> new RuntimeException("Organization Not Found")) ;
+		OrganizationEntity organization = organizationRepository.findById(orgId)
+				.orElseThrow(() -> new RuntimeException("OrganizationEntity Not Found")) ;
 		user.setOrganization(organization);
         return convertEntityToDTO(userRepository.save(user));
 	}
 	
 	public UserDTO unassignUserFromOrganization(Long userId) {
 		logger.info("un assign user: {}", userId);
-	    User user = userRepository.findById(userId)
+		UserEntity user = userRepository.findById(userId)
 	            .orElseThrow(() -> new RuntimeException("User Not Found"));
 	    user.setOrganization(null);
 		logger.info("user after un assign : {}", user);
@@ -112,7 +112,7 @@ public class UserService {
 	
 	public void deleteUser(Long id) {
 		logger.info("check User with id :{}", id);
-		User user = userRepository.findById(id).orElseThrow(() ->
+		UserEntity user = userRepository.findById(id).orElseThrow(() ->
 		new EntityNotFoundException("User with id " + id + " not found"));	
 		
 		logger.info("user  deleted: {}", user);
@@ -120,16 +120,18 @@ public class UserService {
 	    //(search) not delete direct
 	}
 	
-	private UserDTO convertEntityToDTO(User user) {
-        return new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getMobile(),
+	private UserDTO convertEntityToDTO(UserEntity user) {
+//        return new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getMobile(),
+//                user.getOrganization() != null ? user.getOrganization().getId() : null);
+		return new UserDTO(user.getId(), user.getName(),user.getPassword() ,user.getEmail(), user.getMobile(),
                 user.getOrganization() != null ? user.getOrganization().getId() : null);
     }
 
-    private User convertDTOToEntity(UserDTO userDTO) {
-        Organization organization = userDTO.getOrganizationId() != null ?
+    private UserEntity convertDTOToEntity(UserDTO userDTO) {
+        OrganizationEntity organization = userDTO.getOrganizationId() != null ?
                 organizationRepository.findById(userDTO.getOrganizationId()).orElse(null) : null;
 
-        return new User(userDTO.getId(), userDTO.getName(), userDTO.getEmail(),
+        return new UserEntity(userDTO.getId(), userDTO.getName(), userDTO.getPassword() ,userDTO.getEmail(),
                 userDTO.getMobile(), organization);
     }
 }
