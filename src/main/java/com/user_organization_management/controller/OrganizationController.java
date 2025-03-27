@@ -2,15 +2,11 @@ package com.user_organization_management.controller;
 
 import java.util.List;
 
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.user_organization_management.dto.OrganizationDTO;
 import com.user_organization_management.service.OrganizationService;
@@ -42,5 +38,15 @@ public class OrganizationController {
 		}
 		return ResponseEntity.ok(organizationService.createOrganization(organizationDTO));
 	}
-	
+
+	@RequestMapping(value = "/update-org/{id}" , method = RequestMethod.PUT)
+	public ResponseEntity<OrganizationDTO> updateOrganization(@PathVariable @Min(1) Long  id , @Valid @RequestBody OrganizationDTO organizationDTO) {
+		return ResponseEntity.ok(organizationService.updateOrganization(id , organizationDTO));
+	}
+
+	@RequestMapping(value = "/delete/{id}" , method = RequestMethod.DELETE)
+	public ResponseEntity<Void> deleteUser(@PathVariable @Min(1) Long id) {
+		organizationService.deleteOrg(id);
+		return ResponseEntity.noContent().build();
+	}
 }

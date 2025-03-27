@@ -57,18 +57,41 @@ public class UserService {
 				.pageSize(userPage.getSize())
 				.build();
 	}
+
 	public Optional<UserDTO> getUserById(Long id) {
         return Optional.ofNullable(userRepository.findById(id)
                 .map(userMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found")));
-    }
+	}
 
 	public UserDTO createUser(UserDTO userDto) {
-		logger.info("Cereate User: {}", userDto);
+		logger.info("Create User: {}", userDto);
 		UserEntity user = userMapper.toEntity(userDto);
+		if (userDto.getOrganizationId() != null) {
+			OrganizationEntity organization = organizationRepository.findById(userDto.getOrganizationId())
+					.orElseThrow(() -> new EntityNotFoundException("Organization not found with ID: " + userDto.getOrganizationId()));
+			user.setOrganization(organization);
+		} else {
+			user.setOrganization(null);
+		}
 		return userMapper.toDTO(userRepository.save(user));
-
 	}
+
+	public UserDTO updateUser(Long userId, UserDTO userDTO) {
+		UserEntity existingUser = userRepository.findById(userId)
+				.orElseThrow(() -> new EntityNotFoundException("User not found"));
+		existingUser.setName(userDTO.getName());
+		existingUser.setEmail(userDTO.getEmail());
+		existingUser.setMobile(userDTO.getMobile());
+		if (userDTO.getOrganizationId() != null) {
+			OrganizationEntity organization = organizationRepository.findById(userDTO.getOrganizationId())
+					.orElseThrow(() -> new EntityNotFoundException("Organization not found"));
+			existingUser.setOrganization(organization);
+		}
+		UserEntity updatedUser = userRepository.save(existingUser);
+		return userMapper.toDTO(updatedUser);
+	}
+
 
 	public UserDTO assignUserToOrganization(Long userId, Long orgId) {
 		UserEntity user = userRepository.findById(userId)

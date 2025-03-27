@@ -20,7 +20,9 @@ public class OrganizationEntity {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "organization")
+//    cascade = CascadeType.ALL: Automatically deletes users when the organization is deleted.
+//    orphanRemoval = true: Removes users from the database if they are removed from the list.
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserEntity> users;
 
     public OrganizationEntity(String name) {

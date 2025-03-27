@@ -22,7 +22,9 @@ public class UserDTO {
 
     private String mobile;
 
+    private Long organizationId;
     private String organizationName;
+
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;

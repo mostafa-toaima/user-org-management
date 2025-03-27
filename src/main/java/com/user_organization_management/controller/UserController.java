@@ -1,21 +1,15 @@
 package com.user_organization_management.controller;
 
+import com.user_organization_management.dto.OrganizationDTO;
 import com.user_organization_management.model.CustomPageResponse;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.user_organization_management.dto.UserDTO;
 import com.user_organization_management.service.UserService;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
@@ -55,4 +49,10 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
+//	@RequestMapping(value = "/update-user/{id}" , method = RequestMethod.PUT)
+	@PutMapping("/update-user/{id}")
+	public ResponseEntity<UserDTO> updateOrganization(@PathVariable @Min(1) Long  id , @Valid @RequestBody UserDTO userDTO) {
+		return ResponseEntity.ok(userService.updateUser(id , userDTO));
+	}
 }

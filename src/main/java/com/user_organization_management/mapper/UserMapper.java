@@ -10,10 +10,12 @@ import org.mapstruct.factory.Mappers;
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
+    @Mapping(source = "organization.id", target = "organizationId")
     @Mapping(source = "organization.name", target = "organizationName")
     @Mapping(target = "password", ignore = true)
     UserDTO toDTO(UserEntity user);
 
-    @Mapping(target = "organization", ignore = true)
-    UserEntity toEntity(UserDTO user);
+    @Mapping(source = "organizationId", target = "organization.id")
+    @Mapping(target = "organization.name", ignore = true) // Avoid overriding name
+    UserEntity toEntity(UserDTO userDTO);
 }
