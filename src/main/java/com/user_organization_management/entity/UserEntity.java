@@ -31,6 +31,6 @@ public class UserEntity {
     private String mobile;
 
     @ManyToOne
-    @JoinColumn(name = "organization_id")
+    @JoinColumn(name = "organization_id", nullable = true)
     private OrganizationEntity organization;
 }

@@ -39,14 +39,14 @@ public class OrganizationController {
 		return ResponseEntity.ok(organizationService.createOrganization(organizationDTO));
 	}
 
-	@RequestMapping(value = "/update-org/{id}" , method = RequestMethod.PUT)
+	@RequestMapping(value = "/update/{id}" , method = RequestMethod.PUT)
 	public ResponseEntity<OrganizationDTO> updateOrganization(@PathVariable @Min(1) Long  id , @Valid @RequestBody OrganizationDTO organizationDTO) {
 		return ResponseEntity.ok(organizationService.updateOrganization(id , organizationDTO));
 	}
 
 	@RequestMapping(value = "/delete/{id}" , method = RequestMethod.DELETE)
-	public ResponseEntity<Void> deleteUser(@PathVariable @Min(1) Long id) {
-		organizationService.deleteOrg(id);
+	public ResponseEntity<Void> deleteOrganization(@PathVariable @Min(1) Long id) {
+		organizationService.deleteOrganization(id);
 		return ResponseEntity.noContent().build();
 	}
 }

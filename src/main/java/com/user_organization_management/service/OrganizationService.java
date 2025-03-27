@@ -3,21 +3,30 @@ package com.user_organization_management.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.user_organization_management.entity.OrganizationEntity;
-import com.user_organization_management.entity.UserEntity;
-import com.user_organization_management.exception.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.user_organization_management.dto.OrganizationDTO;
+import com.user_organization_management.entity.OrganizationEntity;
+import com.user_organization_management.entity.UserEntity;
+import com.user_organization_management.exception.EntityNotFoundException;
 import com.user_organization_management.repository.OrganizationRepository;
+import com.user_organization_management.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class OrganizationService {
 	@Autowired 
 	private OrganizationRepository organizationRepository;
-	
-	 public List<OrganizationDTO> getAllOrganizations() {
+	@Autowired
+	private UserRepository userRepository;
+
+	private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
+
+	public List<OrganizationDTO> getAllOrganizations() {
 	        return organizationRepository.findAll()
 	                .stream()
 	                .map(org -> new OrganizationDTO(org.getId(), org.getName()))
@@ -49,12 +58,14 @@ public class OrganizationService {
 		return new OrganizationDTO(organization.getId(), organization.getName());
 	}
 
-
-	public void deleteOrg(Long id) {
-		OrganizationEntity org = organizationRepository.findById(id).orElseThrow(() ->
-				new EntityNotFoundException("Organization with id " + id + " not found"));
-//		userRepository.deleteByOrganizationId(id); // Custom delete query
-		organizationRepository.deleteById(org.getId());
-		//(search) not delete direct
+	@Transactional
+	public void deleteOrganization(Long id) {
+		OrganizationEntity organization = organizationRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Organization with ID " + id + " not found!"));
+		List<UserEntity> users = userRepository.findByOrganizationId(id);
+		if (!users.isEmpty()) {
+			userRepository.deleteAll(users);  
+		}
+		organizationRepository.delete(organization);
 	}
 }

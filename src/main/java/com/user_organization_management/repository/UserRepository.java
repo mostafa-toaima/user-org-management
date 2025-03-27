@@ -1,14 +1,12 @@
 package com.user_organization_management.repository;
 
-import com.user_organization_management.entity.UserEntity;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-
-import java.util.Optional;
+import com.user_organization_management.entity.UserEntity;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long>, JpaSpecificationExecutor<UserEntity> {
@@ -20,4 +18,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>, JpaSpec
 //	 Page<UserEntity> findByEmailLike(String email, Pageable pageable);
 //	 Page<UserEntity> findByMobileLike(String mobile, Pageable pageable);
 	 Optional<UserEntity> findByName(String name);
+	List<UserEntity> findByOrganizationId(Long organizationId);
+
 }
