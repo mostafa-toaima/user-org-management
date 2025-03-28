@@ -18,6 +18,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>, JpaSpec
 //	 Page<UserEntity> findByEmailLike(String email, Pageable pageable);
 //	 Page<UserEntity> findByMobileLike(String mobile, Pageable pageable);
 	 Optional<UserEntity> findByName(String name);
-	List<UserEntity> findByOrganizationId(Long organizationId);
+	 boolean existsByEmail(String name);
+	 List<UserEntity> findByOrganizationId(Long organizationId);
 
 }

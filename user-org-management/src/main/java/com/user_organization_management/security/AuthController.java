@@ -1,5 +1,6 @@
 package com.user_organization_management.security;
 import com.user_organization_management.dto.UserDTO;
+import com.user_organization_management.repository.UserRepository;
 import com.user_organization_management.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+        private UserRepository userRepository;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
@@ -49,6 +53,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            throw new IllegalArgumentException("Email already exists!");
+        }
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         userDTO.setPassword(encodedPassword);
         return ResponseEntity.ok(userService.createUser(userDTO));

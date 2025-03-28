@@ -20,22 +20,19 @@ public class OrganizationController {
 	@Autowired
 	private OrganizationService organizationService;
 
-	@GetMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<OrganizationDTO>> getAllOrganizations() {
 		return ResponseEntity.ok(organizationService.getAllOrganizations());
 	}
 	
-	@GetMapping("/{id}")
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<OrganizationDTO> getOrganizationById(@PathVariable Long id) {
 		 return organizationService.getOrganizationById(id)
 				 .map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
 	
-	@PostMapping("/add-org")
-	public ResponseEntity<OrganizationDTO> createOrganization(@Valid @RequestBody OrganizationDTO organizationDTO, BindingResult bindingResult) {
-		if (bindingResult.hasErrors()) {
-			ResponseEntity.badRequest().body(null);
-		}
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public ResponseEntity<OrganizationDTO> createOrganization(@Valid @RequestBody OrganizationDTO organizationDTO) {
 		return ResponseEntity.ok(organizationService.createOrganization(organizationDTO));
 	}
 
